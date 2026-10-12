@@ -6,7 +6,7 @@
 
 ### macOS 데스크톱 치이카와 펫
 
-우사기한테 물어보면 대답해줌. 사실 쓸모없음 그냥 귀여움.
+뭔가 작고 귀여운 녀석(何か小さくてかわいいやつ/난카 치이사쿠테 카와이이 야츠)들한테 물어보면 대답해줌. 사실 쓸모없음 그냥 귀여움.
 
 <a href="https://github.com/jheroorehj/Chiikawa_in_myMac/releases/latest/download/Chiikawa_in_myMac.dmg"><img src="docs/images/download-button.svg" alt="Chiikawa in my Mac 내려받기 — 누르면 바로 설치" width="404"></a>
 
