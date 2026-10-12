@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="404" height="92" viewBox="0 0 404 92" role="img" aria-label="Chiikawa in my Mac 내려받기">
+  <rect x="7" y="9" width="392" height="78" rx="26" fill="#2B1D14" fill-opacity="0.22"/>
+  <rect x="3" y="4" width="392" height="78" rx="26" fill="#FCE1E8" stroke="#2B1D14" stroke-width="3"/>
+  <g fill="none" stroke="#2B1D14" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M48 25v24"/>
+    <path d="M37 39l11 11 11-11"/>
+    <path d="M34 61h28"/>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Segoe UI', 'Malgun Gothic', 'Noto Sans KR', sans-serif" fill="#2B1D14">
+    <text x="94" y="42" font-size="21" font-weight="800">Chiikawa in my Mac 내려받기</text>
+    <text x="94" y="63" font-size="12.5" font-weight="600" fill-opacity="0.68">macOS 14 이상 · Apple Silicon · Intel</text>
+  </g>
+</svg>

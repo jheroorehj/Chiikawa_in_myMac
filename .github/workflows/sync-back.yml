@@ -1,0 +1,93 @@
+# 이 파일은 작업 저장소에서 자동으로 옮겨 옵니다. 여기서 고치면 다음 동기화 때 덮어씁니다.
+name: 작업 저장소로 되돌려 보내기
+
+# 이 저장소에서 직접 고친 내용을 작업 저장소의 같은 파일에 그대로 적용한다.
+# 작업 저장소에서 넘어온 동기화 커밋은 건너뛴다 (서로 주고받으며 끝없이 도는 것을 막는다).
+# .github/ 아래는 되돌려 보내지 않는다 — 워크플로는 작업 저장소에서만 고친다.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-back
+  cancel-in-progress: false
+
+jobs:
+  sync-back:
+    name: 고친 내용 보내기
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 보낼 커밋 고르기
+        id: pick
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/patches"
+          : > "$RUNNER_TEMP/patches/list"
+          # 저장소에 처음 올라온 경우 등, 비교할 이전 상태가 없으면 보낼 것이 없다.
+          if ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            echo "count=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          n=0
+          for c in $(git rev-list --reverse --first-parent "$BEFORE..$AFTER"); do
+            if git log -1 --format=%b "$c" | grep -qE '^작업 저장소 [0-9a-f]+ 에서 동기화$'; then
+              continue
+            fi
+            git diff --binary "$c^" "$c" -- . ':(exclude).github' > "$RUNNER_TEMP/patches/$c.patch"
+            if [ ! -s "$RUNNER_TEMP/patches/$c.patch" ]; then
+              continue
+            fi
+            git log -1 --format=%s "$c" | sed -E 's/ \(#[0-9]+\)$//' > "$RUNNER_TEMP/patches/$c.subject"
+            echo "$c" >> "$RUNNER_TEMP/patches/list"
+            n=$((n + 1))
+          done
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          echo "보낼 커밋: $n 개"
+
+      - name: 작업 저장소 접속 준비
+        if: steps.pick.outputs.count != '0'
+        env:
+          DEPLOY_KEY: ${{ secrets.WORK_REPO_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/work_repo
+          chmod 600 ~/.ssh/work_repo
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: 작업 저장소에 적용하기
+        if: steps.pick.outputs.count != '0'
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/.ssh/work_repo -o IdentitiesOnly=yes
+          WORK_REPO: ${{ secrets.WORK_REPO }}
+          WORK_DIR: Chiikawa_in_myMac
+        run: |
+          git clone -q --depth 50 "git@github.com:$WORK_REPO.git" "$RUNNER_TEMP/work"
+          cd "$RUNNER_TEMP/work"
+          while read -r c; do
+            # 작업 저장소가 그사이 달라졌으면 적용되지 않고 실패한다. 그때는 작업 저장소에서 손으로 맞춘다.
+            git apply --index --directory="$WORK_DIR" "$RUNNER_TEMP/patches/$c.patch"
+            if git diff --cached --quiet; then
+              continue
+            fi
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                commit -q -F "$RUNNER_TEMP/patches/$c.subject" -m "배포용 저장소 ${c:0:7} 에서 동기화"
+          done < "$RUNNER_TEMP/patches/list"
+          for attempt in 1 2 3; do
+            if git push -q origin HEAD:main; then
+              exit 0
+            fi
+            git pull -q --rebase origin main
+          done
+          echo "✘ 작업 저장소에 올리지 못했습니다." >&2
+          exit 1

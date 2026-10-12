@@ -1,0 +1,23 @@
+{
+  "spritesheetPath": "tail.png",
+  "cellWidth": 192,
+  "cellHeight": 208,
+  "columns": 8,
+  "times": [
+    0.0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0,
+    1.1,
+    1.2
+  ],
+  "end": 1.3,
+  "loop": true
+}

@@ -1,0 +1,15 @@
+{
+  "spritesheetPath": "burit.png",
+  "cellWidth": 254,
+  "cellHeight": 175,
+  "columns": 5,
+  "times": [
+    0.0,
+    0.052,
+    0.093,
+    0.177,
+    0.218
+  ],
+  "end": 1.6,
+  "loop": true
+}

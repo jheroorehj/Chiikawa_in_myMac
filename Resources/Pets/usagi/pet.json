@@ -1,0 +1,11 @@
+{
+  "id": "usagi",
+  "displayName": "우사기",
+  "description": "직접 만든 토끼 캐릭터.",
+  "spritesheetPath": "spritesheet.png",
+  "motions": {
+    "running": "lying",
+    "review": "tail",
+    "jumping": "jump"
+  }
+}
