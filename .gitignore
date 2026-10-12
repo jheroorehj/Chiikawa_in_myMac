@@ -4,3 +4,4 @@ build/
 .chiikawa_in_mymac/
 __pycache__/
 .DS_Store
+*.pyc
