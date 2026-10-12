@@ -3,3 +3,4 @@ build/
 # 이 폴더를 작업 폴더로 골랐을 때 생기는 대화 기록
 .chiikawa_in_mymac/
 __pycache__/
+.DS_Store
