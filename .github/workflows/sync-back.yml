@@ -81,7 +81,7 @@ jobs:
             fi
             git -c user.name="github-actions[bot]" \
                 -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-                commit -q -F "$RUNNER_TEMP/patches/$c.subject" -m "배포용 저장소 ${c:0:7} 에서 동기화"
+                commit -q -m "$(cat "$RUNNER_TEMP/patches/$c.subject")" -m "배포용 저장소 ${c:0:7} 에서 동기화"
           done < "$RUNNER_TEMP/patches/list"
           for attempt in 1 2 3; do
             if git push -q origin HEAD:main; then
